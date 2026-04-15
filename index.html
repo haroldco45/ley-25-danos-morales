@@ -664,18 +664,25 @@ async function askAI() {
   const systemPrompt = `Eres un asistente jurídico especializado en derecho civil colombiano, específicamente en el Artículo 6 de la Ley 25 de 1992 sobre daños morales e indemnización por sufrimiento emocional en Colombia. Responde de forma clara, empática y en español colombiano natural. Orienta al usuario sobre sus derechos, los requisitos legales, y los pasos generales que puede seguir. Siempre menciona al final que para su caso específico debe consultar con un abogado. Responde en máximo 4 párrafos concisos. No uses markdown, solo texto plano.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer sk-or-v1-9b2...9f3',
+        'HTTP-Referer': 'https://ldco45.github.io',
+        'X-Title': 'Ley 25 - Daños Morales'
+      },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'anthropic/claude-haiku-4-5',
         max_tokens: 1000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: question }]
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: question }
+        ]
       })
     });
     const data = await res.json();
-    const text = data.content?.map(b => b.text || '').join('') || 'No se pudo obtener respuesta.';
+    const text = data.choices?.[0]?.message?.content || 'No se pudo obtener respuesta.';
     aiText.textContent = text;
     responseBox.classList.add('visible');
   } catch (e) {
