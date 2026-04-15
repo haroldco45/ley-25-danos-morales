@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ley 25 de 1992 — Daños Morales</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8a6f2e;
+    --dark: #0D0D0D;
+    --dark2: #161616;
+    --dark3: #1E1E1E;
+    --card: #1A1A1A;
+    --border: rgba(201,168,76,0.2);
+    --text: #E8E0D0;
+    --muted: #9A9080;
+    --accent: #C9A84C;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG texture */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(201,168,76,0.015) 40px, rgba(201,168,76,0.015) 41px),
+      repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(201,168,76,0.015) 40px, rgba(201,168,76,0.015) 41px);
+    pointer-events: none; z-index: 0;
+  }
+
+  .container { max-width: 820px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 0 22px;
+    text-align: center;
+    position: relative;
+  }
+  .law-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 4px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .law-badge::before { content: '⚖'; font-size: 0.8rem; }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  header h1 span { color: var(--gold); }
+
+  .subtitle {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  /* decorative line */
+  .deco-line {
+    display: flex; align-items: center; gap: 12px;
+    margin: 20px 0 0;
+    opacity: 0.4;
+  }
+  .deco-line::before, .deco-line::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .deco-line span { color: var(--gold); font-size: 0.7rem; letter-spacing: 0.3em; }
+
+  /* ── HERO CARD ── */
+  .hero-card {
+    margin: 32px 0 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.12) 0%, rgba(201,168,76,0.03) 100%);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 4px;
+    padding: 28px 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card::after {
+    content: '§';
+    position: absolute; right: 20px; top: 12px;
+    font-size: 5rem; color: rgba(201,168,76,0.06);
+    font-family: 'Playfair Display', serif;
+    font-weight: 900; line-height: 1;
+  }
+  .hero-card .art-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; color: var(--gold); letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .hero-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem; color: #fff;
+    font-weight: 700; margin-bottom: 12px;
+  }
+  .hero-card p {
+    font-size: 0.98rem; line-height: 1.75;
+    color: var(--text); font-weight: 300;
+  }
+  .hero-card p strong { color: var(--gold-light); font-weight: 600; }
+
+  /* ── SECTIONS ── */
+  .sections { margin: 30px 0; display: flex; flex-direction: column; gap: 14px; }
+
+  .section-card {
+    background: var(--card);
+    border: 1px solid rgba(201,168,76,0.12);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .section-card:hover { border-color: rgba(201,168,76,0.35); background: #1f1f1f; }
+  .section-card.open { border-color: rgba(201,168,76,0.4); }
+
+  .section-head {
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 20px;
+  }
+  .section-icon {
+    width: 38px; height: 38px; flex-shrink: 0;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+  }
+  .section-head h3 {
+    flex: 1;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 700; color: #fff;
+  }
+  .section-head .chevron {
+    color: var(--gold); font-size: 0.8rem;
+    transition: transform 0.3s;
+    font-family: monospace;
+  }
+  .section-card.open .chevron { transform: rotate(180deg); }
+
+  .section-body {
+    display: none;
+    padding: 0 20px 18px 72px;
+    font-size: 0.93rem; line-height: 1.8;
+    color: #c8bfad; font-weight: 300;
+    border-top: 1px solid rgba(201,168,76,0.08);
+  }
+  .section-card.open .section-body { display: block; padding-top: 16px; }
+  .section-body strong { color: var(--gold-light); font-weight: 600; }
+  .section-body ul { padding-left: 18px; margin-top: 8px; }
+  .section-body ul li { margin-bottom: 6px; }
+
+  /* ── ARTICLE BOX ── */
+  .article-box {
+    background: rgba(201,168,76,0.05);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 4px;
+    padding: 22px 24px;
+    margin: 10px 0 30px;
+    position: relative;
+  }
+  .article-box .quote-mark {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem; color: var(--gold); opacity: 0.2;
+    line-height: 0.5; float: left; margin-right: 10px; margin-top: 14px;
+  }
+  .article-box p {
+    font-size: 0.93rem; line-height: 1.8;
+    color: #c0b89a; font-style: italic; font-weight: 300;
+  }
+  .article-box .source {
+    margin-top: 10px; font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold); letter-spacing: 0.08em; font-style: normal;
+  }
+
+  /* ── IA BUTTON ── */
+  .ai-section {
+    margin: 0 0 30px;
+    background: linear-gradient(135deg, #111 0%, #1a1408 100%);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 6px;
+    padding: 24px;
+  }
+  .ai-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; color: #fff; margin-bottom: 6px;
+  }
+  .ai-section p { font-size: 0.88rem; color: var(--muted); margin-bottom: 16px; line-height: 1.6; }
+
+  .ai-input-row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .ai-input {
+    flex: 1; min-width: 200px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 4px;
+    padding: 12px 16px;
+    color: var(--text); font-family: 'Source Serif 4', serif;
+    font-size: 0.92rem; outline: none;
+    transition: border-color 0.2s;
+  }
+  .ai-input:focus { border-color: var(--gold); }
+  .ai-input::placeholder { color: var(--muted); }
+
+  .btn-ai {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+    color: #0D0D0D; border: none; border-radius: 4px;
+    padding: 12px 22px; cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    transition: opacity 0.2s, transform 0.15s;
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn-ai:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-ai:active { transform: translateY(0); }
+  .btn-ai:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .ai-response {
+    display: none; margin-top: 18px;
+    background: rgba(201,168,76,0.05);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-left: 3px solid var(--gold);
+    border-radius: 4px; padding: 18px 20px;
+  }
+  .ai-response.visible { display: block; }
+  .ai-response .ai-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; color: var(--gold); letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ai-response .ai-label::before { content: '◆'; }
+  .ai-response p {
+    font-size: 0.93rem; line-height: 1.8; color: var(--text); font-weight: 300;
+  }
+
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(13,13,13,0.3);
+    border-top-color: #0D0D0D;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── QUICK QUESTIONS ── */
+  .quick-qs {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+  }
+  .quick-q {
+    background: rgba(201,168,76,0.07);
+    border: 1px solid rgba(201,168,76,0.18);
+    border-radius: 30px;
+    padding: 5px 13px;
+    font-size: 0.78rem; color: var(--gold-light);
+    cursor: pointer; transition: background 0.2s;
+    font-family: 'Source Serif 4', serif;
+  }
+  .quick-q:hover { background: rgba(201,168,76,0.15); }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 4px; padding: 14px 18px;
+    margin-bottom: 30px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .disclaimer .icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+  .disclaimer p { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 0;
+    text-align: center;
+    margin-top: 10px;
+  }
+  footer p { font-size: 0.72rem; color: rgba(154,144,128,0.6); letter-spacing: 0.04em; }
+
+  /* ── ENTRANCE ANIM ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  header  { animation: fadeUp 0.6s ease both; }
+  .hero-card  { animation: fadeUp 0.6s 0.1s ease both; }
+  .sections   { animation: fadeUp 0.6s 0.2s ease both; }
+  .article-box{ animation: fadeUp 0.6s 0.25s ease both; }
+  .ai-section { animation: fadeUp 0.6s 0.3s ease both; }
+
+  @media (max-width: 500px) {
+    .section-body { padding-left: 20px; }
+    .ai-input-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="law-badge">República de Colombia · Ley 25 de 1992</div>
+    <h1>Daños Morales:<br><span>Tu Derecho a ser Reparado</span></h1>
+    <p class="subtitle">Artículo 6 — Indemnización por sufrimiento emocional</p>
+    <div class="deco-line"><span>✦</span></div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero-card">
+    <div class="art-label">¿Qué ampara esta ley?</div>
+    <h2>Compensación por el daño que no se ve</h2>
+    <p>
+      El <strong>Artículo 6 de la Ley 25 de 1992</strong> reconoce que el sufrimiento emocional
+      tiene valor jurídico en Colombia. Cuando alguien te causa <strong>dolor, angustia o impacto psicológico</strong>
+      por un hecho dañino, tienes derecho a exigir una reparación económica por ese perjuicio,
+      aunque no haya una lesión física visible.
+    </p>
+  </div>
+
+  <!-- SECTIONS ACCORDION -->
+  <div class="sections">
+
+    <div class="section-card" onclick="toggleSection(this)">
+      <div class="section-head">
+        <div class="section-icon">💔</div>
+        <h3>¿Qué son los daños morales?</h3>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body">
+        Los <strong>daños morales</strong> son perjuicios que no se reflejan en dinero ni en objetos físicos,
+        sino en tu esfera emocional y psicológica. Incluyen:
+        <ul>
+          <li>Dolor intenso y sufrimiento prolongado</li>
+          <li>Angustia, estrés o trauma psicológico</li>
+          <li>Humillación, vergüenza o daño a la dignidad</li>
+          <li>Pérdida de bienestar emocional y calidad de vida</li>
+          <li>Duelo por pérdida de un ser querido</li>
+        </ul>
+        La ley reconoce que estas afectaciones son <strong>tan reales como una fractura</strong>, aunque no se vean.
+      </div>
+    </div>
+
+    <div class="section-card" onclick="toggleSection(this)">
+      <div class="section-head">
+        <div class="section-icon">📋</div>
+        <h3>¿Cuándo puedes reclamar?</h3>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body">
+        Puedes buscar indemnización por daños morales cuando el sufrimiento fue causado por:
+        <ul>
+          <li><strong>Accidentes de tránsito</strong> o negligencia médica</li>
+          <li>Injurias, calumnias o difamación pública</li>
+          <li>Incumplimiento de contrato que genere angustia</li>
+          <li>Pérdida de un familiar por responsabilidad de terceros</li>
+          <li>Acoso laboral o escolar documentado</li>
+          <li>Cualquier acto ilícito que cause sufrimiento demostrable</li>
+        </ul>
+        El <strong>elemento clave</strong> es que debe existir una relación de causalidad entre el hecho y el daño emocional.
+      </div>
+    </div>
+
+    <div class="section-card" onclick="toggleSection(this)">
+      <div class="section-head">
+        <div class="section-icon">⚖️</div>
+        <h3>¿Cómo se determina el monto?</h3>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body">
+        En Colombia, la indemnización por daño moral se mide en <strong>SMMLV (salarios mínimos)</strong>
+        y la fija un juez según:
+        <ul>
+          <li>La intensidad y duración del sufrimiento</li>
+          <li>El vínculo emocional con la víctima directa</li>
+          <li>Las secuelas psicológicas y su impacto en la vida diaria</li>
+          <li>El grado de culpa del responsable</li>
+        </ul>
+        El Consejo de Estado ha fijado topes orientativos de hasta <strong>100 SMMLV</strong> para casos graves,
+        aunque en circunstancias especiales puede superarse.
+      </div>
+    </div>
+
+    <div class="section-card" onclick="toggleSection(this)">
+      <div class="section-head">
+        <div class="section-icon">📁</div>
+        <h3>¿Cómo se prueba el daño moral?</h3>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body">
+        A diferencia del daño material, el moral se prueba de manera más flexible. Los medios más comunes son:
+        <ul>
+          <li><strong>Declaraciones de testigos</strong> que conocen tu estado emocional</li>
+          <li>Dictámenes o certificados de psicólogo o psiquiatra</li>
+          <li>Historia clínica con diagnóstico de afectación emocional</li>
+          <li>Presunción judicial cuando el hecho daña vínculos familiares cercanos</li>
+          <li>Pruebas documentales del hecho causante</li>
+        </ul>
+        Los jueces también aplican <strong>presunciones</strong> en casos donde el daño moral es evidente por la naturaleza del hecho.
+      </div>
+    </div>
+
+    <div class="section-card" onclick="toggleSection(this)">
+      <div class="section-head">
+        <div class="section-icon">🕐</div>
+        <h3>Prescripción y plazos</h3>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body">
+        El plazo para reclamar depende del tipo de responsabilidad:
+        <ul>
+          <li><strong>Responsabilidad civil extracontractual:</strong> 10 años desde el hecho</li>
+          <li><strong>Responsabilidad contractual:</strong> generalmente 4 años</li>
+          <li><strong>Responsabilidad del Estado:</strong> 2 años (acción de reparación directa)</li>
+        </ul>
+        <strong>¡No esperes!</strong> Los plazos corren desde el momento del daño.
+        Consulta con un abogado para determinar el término exacto en tu caso específico.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ARTICLE QUOTE -->
+  <div class="article-box">
+    <div class="quote-mark">"</div>
+    <p>
+      El juez podrá conceder una indemnización a título de reparación del daño moral que hubiere sufrido
+      la víctima o las personas a quienes el daño hubiere causado perjuicios. Dicha reparación
+      se hará en equidad.
+    </p>
+    <div class="source">— Artículo 6 · Ley 25 de 1992 · República de Colombia</div>
+  </div>
+
+  <!-- IA SECTION -->
+  <div class="ai-section">
+    <h3>✦ Consulta con Inteligencia Artificial</h3>
+    <p>Hazle una pregunta sobre daños morales, la Ley 25 de 1992 o tu situación específica. La IA te orientará de forma clara.</p>
+
+    <div class="quick-qs" id="quickQs">
+      <span class="quick-q" onclick="useQuick(this)">¿Mi caso aplica para reclamar?</span>
+      <span class="quick-q" onclick="useQuick(this)">¿Qué documentos necesito?</span>
+      <span class="quick-q" onclick="useQuick(this)">¿Cuánto tiempo tengo para reclamar?</span>
+      <span class="quick-q" onclick="useQuick(this)">¿Cómo demuestro el sufrimiento?</span>
+    </div>
+
+    <div class="ai-input-row" style="margin-top:14px;">
+      <input class="ai-input" id="aiInput" type="text"
+        placeholder="Ej: Sufrí acoso laboral y tengo ansiedad, ¿puedo reclamar daño moral?">
+      <button class="btn-ai" id="aiBtn" onclick="askAI()">
+        <span id="btnContent">Preguntar IA</span>
+      </button>
+    </div>
+
+    <div class="ai-response" id="aiResponse">
+      <div class="ai-label">Respuesta de IA — Orientación Legal</div>
+      <p id="aiText"></p>
+    </div>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    <div class="icon">ℹ️</div>
+    <p>Esta aplicación tiene fines informativos y educativos. No constituye asesoría jurídica profesional.
+    Ante una situación legal específica, consulta siempre con un abogado habilitado en Colombia.</p>
+  </div>
+
+  <footer>
+    <p>Desarrollada por Vibras Positivas HM — Derechos de Autor Reservados</p>
+  </footer>
+
+</div>
+
+<script>
+function toggleSection(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.section-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+function useQuick(el) {
+  document.getElementById('aiInput').value = el.textContent;
+  document.getElementById('aiInput').focus();
+}
+
+async function askAI() {
+  const input = document.getElementById('aiInput');
+  const btn = document.getElementById('aiBtn');
+  const responseBox = document.getElementById('aiResponse');
+  const aiText = document.getElementById('aiText');
+  const btnContent = document.getElementById('btnContent');
+  const question = input.value.trim();
+
+  if (!question) {
+    input.focus();
+    input.style.borderColor = 'rgba(201,168,76,0.6)';
+    setTimeout(() => input.style.borderColor = '', 1200);
+    return;
+  }
+
+  btn.disabled = true;
+  btnContent.innerHTML = '<span class="spinner"></span> Consultando…';
+  responseBox.classList.remove('visible');
+
+  const systemPrompt = `Eres un asistente jurídico especializado en derecho civil colombiano, 
+específicamente en el Artículo 6 de la Ley 25 de 1992 sobre daños morales e indemnización por 
+sufrimiento emocional en Colombia. 
+
+Responde de forma clara, empática y en español colombiano natural. 
+Orienta al usuario sobre sus derechos, los requisitos legales, y los pasos generales que puede seguir.
+Siempre recuerda mencionar al final que para su caso específico debe consultar con un abogado.
+Responde en máximo 4 párrafos concisos. No uses markdown, solo texto plano.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: question }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.map(b => b.text || '').join('') || 'No se pudo obtener respuesta.';
+    aiText.textContent = text;
+    responseBox.classList.add('visible');
+  } catch (e) {
+    aiText.textContent = 'Ocurrió un error al consultar la IA. Por favor intenta de nuevo.';
+    responseBox.classList.add('visible');
+  }
+
+  btn.disabled = false;
+  btnContent.textContent = 'Preguntar IA';
+}
+
+document.getElementById('aiInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') askAI();
+});
+</script>
+
+</body>
+</html>
