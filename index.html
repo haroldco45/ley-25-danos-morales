@@ -465,32 +465,6 @@
     <div class="source">— Artículo 6 · Ley 25 de 1992 · República de Colombia</div>
   </div>
 
-  <!-- IA SECTION -->
-  <div class="ai-section">
-    <h3>✦ Consulta con Inteligencia Artificial</h3>
-    <p>Hazle una pregunta sobre daños morales, la Ley 25 de 1992 o tu situación específica. La IA te orientará de forma clara.</p>
-
-    <div class="quick-qs" id="quickQs">
-      <span class="quick-q" onclick="useQuick(this)">¿Mi caso aplica para reclamar?</span>
-      <span class="quick-q" onclick="useQuick(this)">¿Qué documentos necesito?</span>
-      <span class="quick-q" onclick="useQuick(this)">¿Cuánto tiempo tengo para reclamar?</span>
-      <span class="quick-q" onclick="useQuick(this)">¿Cómo demuestro el sufrimiento?</span>
-    </div>
-
-    <div class="ai-input-row" style="margin-top:14px;">
-      <input class="ai-input" id="aiInput" type="text"
-        placeholder="Ej: Sufrí acoso laboral y tengo ansiedad, ¿puedo reclamar daño moral?">
-      <button class="btn-ai" id="aiBtn" onclick="askAI()">
-        <span id="btnContent">Preguntar IA</span>
-      </button>
-    </div>
-
-    <div class="ai-response" id="aiResponse">
-      <div class="ai-label">Respuesta de IA — Orientación Legal</div>
-      <p id="aiText"></p>
-    </div>
-  </div>
-
   <!-- DISCLAIMER -->
   <div class="disclaimer">
     <div class="icon">ℹ️</div>
@@ -504,6 +478,148 @@
 
 </div>
 
+<!-- BOTÓN FLOTANTE IA -->
+<button class="fab-ai" onclick="openModal()" title="Consultar IA">⚖️</button>
+
+<!-- MODAL IA -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeOnOverlay(event)">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-header">
+      <h3>Consulta con Inteligencia Artificial</h3>
+      <button class="btn-close" onclick="closeModal()">✕</button>
+    </div>
+    <p class="modal-sub">Hazle una pregunta sobre daños morales o la Ley 25 de 1992. La IA te orientará de forma clara y empática.</p>
+
+    <div class="quick-qs">
+      <span class="quick-q" onclick="useQuick(this)">¿Mi caso aplica para reclamar?</span>
+      <span class="quick-q" onclick="useQuick(this)">¿Qué documentos necesito?</span>
+      <span class="quick-q" onclick="useQuick(this)">¿Cuánto tiempo tengo?</span>
+      <span class="quick-q" onclick="useQuick(this)">¿Cómo demuestro el sufrimiento?</span>
+    </div>
+
+    <div class="ai-input-row">
+      <input class="ai-input" id="aiInput" type="text"
+        placeholder="Ej: Sufrí acoso laboral, ¿puedo reclamar daño moral?">
+      <button class="btn-ai" id="aiBtn" onclick="askAI()">
+        <span id="btnContent">Preguntar</span>
+      </button>
+    </div>
+
+    <div class="ai-response" id="aiResponse">
+      <div class="ai-label">Respuesta de IA — Orientación Legal</div>
+      <p id="aiText"></p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .fab-ai {
+    position: fixed; bottom: 28px; right: 22px; z-index: 999;
+    width: 62px; height: 62px; border-radius: 50%;
+    background: linear-gradient(135deg, #C9A84C 0%, #8a6f2e 100%);
+    border: none; cursor: pointer;
+    box-shadow: 0 4px 24px rgba(201,168,76,0.5);
+    font-size: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .fab-ai:hover { transform: scale(1.1); box-shadow: 0 6px 32px rgba(201,168,76,0.7); }
+  .fab-ai:active { transform: scale(0.95); }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.78); backdrop-filter: blur(5px);
+    align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: #161610;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-bottom: none;
+    border-radius: 18px 18px 0 0;
+    width: 100%; max-width: 620px;
+    padding: 26px 20px 34px;
+    animation: slideUp 0.3s cubic-bezier(.22,.68,0,1.15) both;
+    max-height: 88vh; overflow-y: auto;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0.4; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;
+  }
+  .modal-header h3 {
+    font-family: 'Playfair Display', serif; font-size: 1.05rem; color: #fff;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .modal-header h3::before { content: '✦'; color: #C9A84C; font-size: 0.75rem; }
+  .btn-close {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+    color: #9A9080; border-radius: 50%; width: 30px; height: 30px;
+    cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;
+  }
+  .btn-close:hover { background: rgba(255,255,255,0.14); }
+  .modal-sub { font-size: 0.82rem; color: #9A9080; margin-bottom: 14px; line-height: 1.55; }
+
+  .quick-qs { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+  .quick-q {
+    background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 30px; padding: 5px 12px;
+    font-size: 0.76rem; color: #E8C97A; cursor: pointer;
+    font-family: 'Source Serif 4', serif; transition: background 0.2s;
+  }
+  .quick-q:hover { background: rgba(201,168,76,0.16); }
+
+  .ai-input-row { display: flex; gap: 8px; }
+  .ai-input {
+    flex: 1; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.22); border-radius: 4px;
+    padding: 11px 14px; color: #E8E0D0;
+    font-family: 'Source Serif 4', serif; font-size: 0.88rem; outline: none;
+    transition: border-color 0.2s;
+  }
+  .ai-input:focus { border-color: #C9A84C; }
+  .ai-input::placeholder { color: #9A9080; font-size: 0.8rem; }
+
+  .btn-ai {
+    background: linear-gradient(135deg, #C9A84C 0%, #8a6f2e 100%);
+    color: #0D0D0D; border: none; border-radius: 4px;
+    padding: 11px 16px; cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.74rem;
+    font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    white-space: nowrap; display: flex; align-items: center; gap: 6px;
+    transition: opacity 0.2s;
+  }
+  .btn-ai:hover { opacity: 0.88; }
+  .btn-ai:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .ai-response {
+    display: none; margin-top: 16px;
+    background: rgba(201,168,76,0.05);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-left: 3px solid #C9A84C;
+    border-radius: 4px; padding: 16px 18px;
+  }
+  .ai-response.visible { display: block; }
+  .ai-response .ai-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: #C9A84C;
+    letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .ai-response .ai-label::before { content: '◆'; }
+  .ai-response p {
+    font-size: 0.88rem; line-height: 1.8; color: #E8E0D0;
+    font-weight: 300; white-space: pre-wrap;
+  }
+  .spinner {
+    display: inline-block; width: 12px; height: 12px;
+    border: 2px solid rgba(13,13,13,0.3); border-top-color: #0D0D0D;
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
 <script>
 function toggleSection(card) {
   const isOpen = card.classList.contains('open');
@@ -511,8 +627,19 @@ function toggleSection(card) {
   if (!isOpen) card.classList.add('open');
 }
 
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('aiInput').focus(), 350);
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+function closeOnOverlay(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
 function useQuick(el) {
-  document.getElementById('aiInput').value = el.textContent;
+  document.getElementById('aiInput').value = el.textContent.trim();
   document.getElementById('aiInput').focus();
 }
 
@@ -525,31 +652,23 @@ async function askAI() {
   const question = input.value.trim();
 
   if (!question) {
-    input.focus();
-    input.style.borderColor = 'rgba(201,168,76,0.6)';
+    input.style.borderColor = 'rgba(201,168,76,0.7)';
     setTimeout(() => input.style.borderColor = '', 1200);
-    return;
+    input.focus(); return;
   }
 
   btn.disabled = true;
   btnContent.innerHTML = '<span class="spinner"></span> Consultando…';
   responseBox.classList.remove('visible');
 
-  const systemPrompt = `Eres un asistente jurídico especializado en derecho civil colombiano, 
-específicamente en el Artículo 6 de la Ley 25 de 1992 sobre daños morales e indemnización por 
-sufrimiento emocional en Colombia. 
-
-Responde de forma clara, empática y en español colombiano natural. 
-Orienta al usuario sobre sus derechos, los requisitos legales, y los pasos generales que puede seguir.
-Siempre recuerda mencionar al final que para su caso específico debe consultar con un abogado.
-Responde en máximo 4 párrafos concisos. No uses markdown, solo texto plano.`;
+  const systemPrompt = `Eres un asistente jurídico especializado en derecho civil colombiano, específicamente en el Artículo 6 de la Ley 25 de 1992 sobre daños morales e indemnización por sufrimiento emocional en Colombia. Responde de forma clara, empática y en español colombiano natural. Orienta al usuario sobre sus derechos, los requisitos legales, y los pasos generales que puede seguir. Siempre menciona al final que para su caso específico debe consultar con un abogado. Responde en máximo 4 párrafos concisos. No uses markdown, solo texto plano.`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
         system: systemPrompt,
         messages: [{ role: 'user', content: question }]
@@ -560,12 +679,12 @@ Responde en máximo 4 párrafos concisos. No uses markdown, solo texto plano.`;
     aiText.textContent = text;
     responseBox.classList.add('visible');
   } catch (e) {
-    aiText.textContent = 'Ocurrió un error al consultar la IA. Por favor intenta de nuevo.';
+    aiText.textContent = 'Ocurrió un error al consultar la IA. Verifica tu conexión e intenta de nuevo.';
     responseBox.classList.add('visible');
   }
 
   btn.disabled = false;
-  btnContent.textContent = 'Preguntar IA';
+  btnContent.textContent = 'Preguntar';
 }
 
 document.getElementById('aiInput').addEventListener('keydown', e => {
